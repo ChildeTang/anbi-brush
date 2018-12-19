@@ -51,6 +51,7 @@ while True:
             hask = huobi['tick']['ask'][0]
 
             tick = True
+            first = None
             if bid < hbid < ask < hask:
                 bid = hbid
             elif bid < hbid < hask < ask:
@@ -61,9 +62,11 @@ while True:
             elif hask < bid < hask + 1:
                 if bid + 0.0001 < ask:
                     ask = bid + 0.0001
+                first = 'bid'
             elif hbid - 1 < ask < hbid:
                 if bid < ask - 0.0001:
                     bid = ask - 0.0001
+                first = ask
             else:
                 tick = False
                 print('b: %s a: %s hb:%s ha %s' % (bid, ask, hbid, hask))
@@ -82,12 +85,19 @@ while True:
                 askAmount.send_keys("%.8f" % amount)
                 bidPrice.send_keys("%.6f" % price)
                 bidAmount.send_keys("%.8f" % amount)
-                if 0.5 < random.random():
+                if first is None:
+                    if 0.5 < random.random():
+                        sellCoin.click()
+                        buyCoin.click()
+                    else:
+                        buyCoin.click()
+                        sellCoin.click()
+                elif first == 'bid':
+                    buyCoin.click()
+                    sellCoin.click()
+                elif first == 'ask':
                     sellCoin.click()
                     buyCoin.click()
-                else:
-                    buyCoin.click()
-                    sellCoin.click()
 
             time.sleep(random.randint(5, 11))
             # time.sleep(random.randint(2, 3))
