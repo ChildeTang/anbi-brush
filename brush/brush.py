@@ -62,11 +62,11 @@ while True:
             elif hask < bid < hask + 1:
                 if bid + 0.0001 < ask:
                     ask = bid + 0.0001
-                first = 'bid'
+                first = 'ask'
             elif hbid - 1 < ask < hbid:
                 if bid < ask - 0.0001:
                     bid = ask - 0.0001
-                first = ask
+                first = 'bid'
             else:
                 tick = False
                 print('b: %s a: %s hb:%s ha %s' % (bid, ask, hbid, hask))
