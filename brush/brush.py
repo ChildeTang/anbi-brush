@@ -1,5 +1,6 @@
 import random
 import time
+import requests
 
 from selenium import webdriver
 
@@ -44,8 +45,28 @@ while True:
 
             bid = float(driver.find_element_by_class_name('buy').find_elements_by_class_name('price')[0].text)
             ask = float(driver.find_element_by_class_name('sell').find_elements_by_class_name('price')[-1].text)
-            if bid < 50:
-                bid = ask - 2
+
+            huobi = requests.get('https://api.huobi.pro/market/detail/merged?symbol=ethusdt').json()
+            hbid = huobi['tick']['bid'][0]
+            hask = huobi['tick']['ask'][0]
+
+            tick = True
+            if bid < hbid < ask < hask:
+                bid = hbid
+            elif bid < hbid < hask < ask:
+                bid = hbid
+                ask = hask
+            elif hbid < bid < hask < ask:
+                ask = hask
+            elif hask < bid < hask + 1:
+                if bid + 0.0001 < ask:
+                    ask = bid + 0.0001
+            elif hbid - 1 < ask < hbid:
+                if bid < ask - 0.0001:
+                    bid = ask - 0.0001
+            else:
+                tick = False
+                print('b: %s a: %s hb:%s ha %s' % (bid, ask, hbid, hask))
 
             price = round(bid + (ask - bid) / 3 * 0 + (ask - bid) / 3 * 3 * random.random(), 6)
             print("bid:%s price:%s ask:%s" % (bid, price, ask))
@@ -56,7 +77,7 @@ while True:
                 if balance / price < amount:
                     amount = float('%.8f' % (balance / price * 0.65))
 
-            if 0.000002 < amount:
+            if tick and 0.000002 < amount:
                 askPrice.send_keys("%.6f" % price)
                 askAmount.send_keys("%.8f" % amount)
                 bidPrice.send_keys("%.6f" % price)
