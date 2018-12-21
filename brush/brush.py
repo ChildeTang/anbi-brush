@@ -20,7 +20,7 @@ while True:
     driver.get('https://www.anbi.com/tradingview?symbol=ETH_USDT')
     time.sleep(5)
 
-        while True:
+            while True:
         try:
             print("tick --> ")
 
@@ -94,15 +94,19 @@ while True:
                 if first is None:
                     if 0.5 < random.random():
                         sellCoin.click()
+                        time.sleep(1)
                         buyCoin.click()
                     else:
                         buyCoin.click()
+                        time.sleep(1)
                         sellCoin.click()
                 elif first == 'bid':
                     buyCoin.click()
+                    time.sleep(1)
                     sellCoin.click()
                 elif first == 'ask':
                     sellCoin.click()
+                    time.sleep(1)
                     buyCoin.click()
 
             time.sleep(random.randint(3, 5))
