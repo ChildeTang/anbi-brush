@@ -20,7 +20,7 @@ while True:
     driver.get('https://www.anbi.com/tradingview?symbol=ETH_USDT')
     time.sleep(5)
 
-    while True:
+        while True:
         try:
             print("tick --> ")
 
@@ -52,6 +52,7 @@ while True:
 
             tick = True
             first = None
+            little = False
             if bid < hbid < ask < hask:
                 bid = hbid
             elif bid < hbid < hask < ask:
@@ -59,14 +60,16 @@ while True:
                 ask = hask
             elif hbid < bid < hask < ask:
                 ask = hask
-            elif hask < bid < hask + 1:
+            elif hask < bid < hask + 10:
                 if bid + 0.0001 < ask:
                     ask = bid + 0.0001
                 first = 'ask'
-            elif hbid - 1 < ask < hbid:
+                little = True
+            elif hbid - 10 < ask < hbid:
                 if bid < ask - 0.0001:
                     bid = ask - 0.0001
                 first = 'bid'
+                little = True
             else:
                 tick = False
                 print('b: %s a: %s hb:%s ha %s' % (bid, ask, hbid, hask))
@@ -76,9 +79,12 @@ while True:
 
             amount = 0
             if bid < price < ask:
-                amount = stocks * 0.65
+                amount = stocks * 0.45
                 if balance / price < amount:
-                    amount = float('%.8f' % (balance / price * 0.65))
+                    amount = float('%.8f' % (balance / price * 0.45))
+
+            if little and 0.002 < amount:
+                amount = 0.002
 
             if tick and 0.000002 < amount:
                 askPrice.send_keys("%.6f" % price)
@@ -99,7 +105,7 @@ while True:
                     sellCoin.click()
                     buyCoin.click()
 
-            time.sleep(random.randint(5, 11))
+            time.sleep(random.randint(3, 5))
             # time.sleep(random.randint(2, 3))
         except Exception as e:
             print(str(e))
